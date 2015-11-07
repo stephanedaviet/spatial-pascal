@@ -1,0 +1,23 @@
+{
+  "name": "spatial-pascal",
+  "version": "1.0.0",
+  "description": "Un petit jeu inspiré mi Vectrex, mi shoot em up pour s'initier à Phaser et initier mon fils à la programmation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stephanedaviet/spatial-pascal.git"
+  },
+  "author": "Stéphane Daviet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stephanedaviet/spatial-pascal/issues"
+  },
+  "homepage": "https://github.com/stephanedaviet/spatial-pascal#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-connect": "^2.2.0"
+  }
+}

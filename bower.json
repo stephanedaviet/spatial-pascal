@@ -1,0 +1,22 @@
+{
+  "name": "Spatial Pascal !",
+  "authors": [
+    "Stéphane Daviet"
+  ],
+  "description": "Un petit jeu inspiré mi Vectrex, mi shoot em up pour s'initier à Phaser et initier mon fils à la programmation.",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "phaser": "~2.4.4"
+  }
+}
