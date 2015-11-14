@@ -23,13 +23,16 @@
                     create: create,
                     update: update
                   });
-                var asteroidsCount = 30;
-                var ship, asteroids, asteroid1, asteroid2, asteroid3, explosion;
+                var asteroidsCount = 10;
+                var bulletTime = 0;
+                var bulletSide = 0;
+                var ship, asteroids, bullets;
 
                 function preload () {
                     game.load.image('background', 'images/deep-space.jpg');
                     game.load.image('ship', 'images/ship.png');
-                    for (var i = 0; i < asteroidsCount; i++) {
+                    game.load.image('bullet', 'images/bullet.png');
+                    for (var i = 0; i < 3; i++) {
                         game.load.image('asteroid' + (i + 1), 'images/asteroid' + (i + 1) + '.png');
                     }
                 }
@@ -48,6 +51,13 @@
                     ship.body.bounce.setTo(1, 1);
                     ship.body.drag.set(200);
                     ship.body.maxVelocity.set(200);
+
+                    bullets = game.add.group();
+                    bullets.enableBody = true;
+                    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+                    bullets.createMultiple(40, 'bullet');
+                    bullets.setAll('anchor.x', 0.5);
+                    bullets.setAll('anchor.y', 0.5);
 
                     asteroids = game.add.group();
                     for (var i = 0; i < asteroidsCount; i++) {
@@ -82,10 +92,29 @@
                         ship.body.angularVelocity = 0;
                     }
 
+                    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+                        fireBullet();
+                    }
+
                     screenWrap(ship);
                     asteroids.forEachExists(screenWrap, this);
 
                     game.physics.arcade.collide(ship, asteroids);
+                }
+
+                function fireBullet () {
+                    if (game.time.now > bulletTime) {
+                        bullet = bullets.getFirstExists(false);
+
+                        if (bullet) {
+                            bullet.reset(ship.body.x + 10, ship.body.y + 12 + bulletSide * 21);
+                            bullet.lifespan = 2000;
+                            bullet.rotation = ship.rotation;
+                            game.physics.arcade.velocityFromRotation(ship.rotation, 400, bullet.body.velocity);
+                            bulletTime = game.time.now + 50;
+                            bulletSide = (bulletSide + 1) % 2
+                        }
+                    }
                 }
 
                 function screenWrap (sprite) {
