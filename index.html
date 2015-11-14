@@ -23,15 +23,15 @@
                     create: create,
                     update: update
                   });
-                var ship, asteroid1, asteroid2, asteroid3, explosion;
+                var asteroidsCount = 30;
+                var ship, asteroids, asteroid1, asteroid2, asteroid3, explosion;
 
                 function preload () {
                     game.load.image('background', 'images/deep-space.jpg');
                     game.load.image('ship', 'images/ship.png');
-                    game.load.image('asteroid1', 'images/asteroid1.png');
-                    game.load.image('asteroid2', 'images/asteroid2.png');
-                    game.load.image('asteroid3', 'images/asteroid3.png');
-                    game.load.image('explosion', 'images/explosion.png');
+                    for (var i = 0; i < asteroidsCount; i++) {
+                        game.load.image('asteroid' + (i + 1), 'images/asteroid' + (i + 1) + '.png');
+                    }
                 }
 
                 function create () {
@@ -44,34 +44,62 @@
 
                     ship = game.add.sprite(game.world.centerX, game.world.centerY, 'ship');
                     ship.anchor.set(0.5);
-
                     game.physics.enable(ship, Phaser.Physics.ARCADE);
-
+                    ship.body.bounce.setTo(1, 1);
                     ship.body.drag.set(200);
                     ship.body.maxVelocity.set(200);
 
-                    asteroid1 = game.add.sprite(game.world.centerX, game.world.centerY, 'asteroid1');
-                    asteroid2 = game.add.sprite(game.world.centerX, game.world.centerY, 'asteroid2');
-                    asteroid3 = game.add.sprite(game.world.centerX, game.world.centerY, 'asteroid3');
+                    asteroids = game.add.group();
+                    for (var i = 0; i < asteroidsCount; i++) {
+                        var asteroid = asteroids.create(game.rnd.integerInRange(100, game.width - 100),
+                            game.rnd.integerInRange(100, game.height - 100),
+                            'asteroid' + ((i % 3) + 1));
+                        asteroid.rotation = game.rnd.integerInRange(0, 360);
+                        asteroid.anchor.set(0.5);
+                        game.physics.arcade.enable(asteroid, false);
+                    }
 
                     cursors = game.input.keyboard.createCursorKeys();
                     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
                 }
 
                 function update() {
-                  if (cursors.up.isDown) {
-                      game.physics.arcade.accelerationFromRotation(ship.rotation, 200, ship.body.acceleration);
-                   } else {
-                       ship.body.acceleration.set(0);
-                   }
+                    asteroids.forEachAlive(function(asteroid) {
+                        game.physics.arcade.velocityFromRotation(asteroid.rotation, 50, asteroid.body.velocity);
+                    }, this);
 
-                   if (cursors.left.isDown) {
-                       ship.body.angularVelocity = -300;
-                   } else if (cursors.right.isDown) {
-                       ship.body.angularVelocity = 300;
-                   } else {
-                       ship.body.angularVelocity = 0;
-                   }
+                    if (cursors.up.isDown) {
+                        game.physics.arcade.accelerationFromRotation(ship.rotation, 200, ship.body.acceleration);
+                    } else {
+                        ship.body.acceleration.set(0);
+                    }
+
+                    if (cursors.left.isDown) {
+                        ship.body.angularVelocity = -300;
+                    } else if (cursors.right.isDown) {
+                        ship.body.angularVelocity = 300;
+                    } else {
+                        ship.body.angularVelocity = 0;
+                    }
+
+                    screenWrap(ship);
+                    asteroids.forEachExists(screenWrap, this);
+
+                    game.physics.arcade.collide(ship, asteroids);
+                }
+
+                function screenWrap (sprite) {
+                    if (sprite.x < 0) {
+                        sprite.x = game.width;
+                    } else if (sprite.x > game.width) {
+                        sprite.x = 0;
+                    }
+
+                    if (sprite.y < 0) {
+                        sprite.y = game.height;
+                    } else if (sprite.y > game.height) {
+                        sprite.y = 0;
+                    }
                 }
             };
         </script>
