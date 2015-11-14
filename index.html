@@ -3,32 +3,77 @@
     <head>
         <meta charset="UTF-8" />
         <title>hello phaser!</title>
-        <script src="phaser.min.js"></script>
+        <script src="bower_components/phaser/build/phaser.js"></script>
+        <style>
+            html, body {
+                padding: 0;
+                margin: 0
+            }
+        </style>
     </head>
     <body>
+        <script type="text/javascript">
+            window.onload = function() {
+                var game = new Phaser.Game(document.documentElement.clientWidth,
+                  document.documentElement.clientHeight,
+                  Phaser.CANVAS,
+                  '',
+                  {
+                    preload: preload,
+                    create: create,
+                    update: update
+                  });
+                var ship, asteroid1, asteroid2, asteroid3, explosion;
 
-    <script type="text/javascript">
+                function preload () {
+                    game.load.image('background', 'images/deep-space.jpg');
+                    game.load.image('ship', 'images/ship.png');
+                    game.load.image('asteroid1', 'images/asteroid1.png');
+                    game.load.image('asteroid2', 'images/asteroid2.png');
+                    game.load.image('asteroid3', 'images/asteroid3.png');
+                    game.load.image('explosion', 'images/explosion.png');
+                }
 
-    window.onload = function() {
+                function create () {
+                    game.renderer.clearBeforeRender = false;
+                    game.renderer.roundPixels = true;
 
-        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
+                    game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        function preload () {
+                    game.add.tileSprite(0, 0, game.width, game.height, 'background');
 
-            game.load.image('logo', 'phaser.png');
+                    ship = game.add.sprite(game.world.centerX, game.world.centerY, 'ship');
+                    ship.anchor.set(0.5);
 
-        }
+                    game.physics.enable(ship, Phaser.Physics.ARCADE);
 
-        function create () {
+                    ship.body.drag.set(200);
+                    ship.body.maxVelocity.set(200);
 
-            var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
-            logo.anchor.setTo(0.5, 0.5);
+                    asteroid1 = game.add.sprite(game.world.centerX, game.world.centerY, 'asteroid1');
+                    asteroid2 = game.add.sprite(game.world.centerX, game.world.centerY, 'asteroid2');
+                    asteroid3 = game.add.sprite(game.world.centerX, game.world.centerY, 'asteroid3');
 
-        }
+                    cursors = game.input.keyboard.createCursorKeys();
+                    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
+                }
 
-    };
+                function update() {
+                  if (cursors.up.isDown) {
+                      game.physics.arcade.accelerationFromRotation(ship.rotation, 200, ship.body.acceleration);
+                   } else {
+                       ship.body.acceleration.set(0);
+                   }
 
-    </script>
-
+                   if (cursors.left.isDown) {
+                       ship.body.angularVelocity = -300;
+                   } else if (cursors.right.isDown) {
+                       ship.body.angularVelocity = 300;
+                   } else {
+                       ship.body.angularVelocity = 0;
+                   }
+                }
+            };
+        </script>
     </body>
 </html>
